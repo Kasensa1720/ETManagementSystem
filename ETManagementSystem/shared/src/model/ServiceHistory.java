@@ -1,126 +1,126 @@
-package com.etms.server.servicehistory;
+// package com.etms.server.servicehistory;
 
 
-import java.sql.Date;
+// import java.sql.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-
+// import javax.persistence.Column;
+// import javax.persistence.Entity;
+// import javax.persistence.GeneratedValue;
+// import javax.persistence.GenerationType;
+// import javax.persistence.Id;
+// import javax.persistence.Table;
 
 
-@Entity
-@Table(name = "service_history")
-public class ServiceHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "service_id")
-    private int serviceId;
 
-    @Column(name = "vehicle_id", nullable = false)
-    private int vehicleId;
+// @Entity
+// @Table(name = "service_history")
+// public class ServiceHistory {
 
-    @Column(name = "service_type", nullable = false, length = 100)
-    private String serviceType;
+//     @Id
+//     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//     @Column(name = "service_id")
+//     private int serviceId;
 
-    @Column(name = "details", length = 255)
-    private String details;
+//     @Column(name = "vehicle_id", nullable = false)
+//     private int vehicleId;
 
-    @Column(name = "performed_by", length = 100)
-    private String performedBy;
+//     @Column(name = "service_type", nullable = false, length = 100)
+//     private String serviceType;
 
-    @Column(name = "service_date", nullable = false)
-    private Date serviceDate;
+//     @Column(name = "details", length = 255)
+//     private String details;
 
-    @Column(name = "tuning_job_id", nullable = true)
-    private Integer tuningJobId;
+//     @Column(name = "performed_by", length = 100)
+//     private String performedBy;
 
-    // Constructors
-    public ServiceHistory() {}
+//     @Column(name = "service_date", nullable = false)
+//     private Date serviceDate;
 
-    public ServiceHistory(int serviceId, int vehicleId, String serviceType, String details,
-                          String performedBy, Date serviceDate, Integer tuningJobId) {
-        this.serviceId = serviceId;
-        this.vehicleId = vehicleId;
-        this.serviceType = serviceType;
-        this.details = details;
-        this.performedBy = performedBy;
-        this.serviceDate = serviceDate;
-        this.tuningJobId = tuningJobId;
-    }
+//     @Column(name = "tuning_job_id", nullable = true)
+//     private Integer tuningJobId;
 
-    // Getters and Setters
-    public int getServiceId() {
-        return serviceId;
-    }
+//     // Constructors
+//     public ServiceHistory() {}
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
-    }
+//     public ServiceHistory(int serviceId, int vehicleId, String serviceType, String details,
+//                           String performedBy, Date serviceDate, Integer tuningJobId) {
+//         this.serviceId = serviceId;
+//         this.vehicleId = vehicleId;
+//         this.serviceType = serviceType;
+//         this.details = details;
+//         this.performedBy = performedBy;
+//         this.serviceDate = serviceDate;
+//         this.tuningJobId = tuningJobId;
+//     }
 
-    public int getVehicleId() {
-        return vehicleId;
-    }
+//     // Getters and Setters
+//     public int getServiceId() {
+//         return serviceId;
+//     }
 
-    public void setVehicleId(int vehicleId) {
-        this.vehicleId = vehicleId;
-    }
+//     public void setServiceId(int serviceId) {
+//         this.serviceId = serviceId;
+//     }
 
-    public String getServiceType() {
-        return serviceType;
-    }
+//     public int getVehicleId() {
+//         return vehicleId;
+//     }
 
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
+//     public void setVehicleId(int vehicleId) {
+//         this.vehicleId = vehicleId;
+//     }
 
-    public String getDetails() {
-        return details;
-    }
+//     public String getServiceType() {
+//         return serviceType;
+//     }
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
+//     public void setServiceType(String serviceType) {
+//         this.serviceType = serviceType;
+//     }
 
-    public String getPerformedBy() {
-        return performedBy;
-    }
+//     public String getDetails() {
+//         return details;
+//     }
 
-    public void setPerformedBy(String performedBy) {
-        this.performedBy = performedBy;
-    }
+//     public void setDetails(String details) {
+//         this.details = details;
+//     }
 
-    public Date getServiceDate() {
-        return serviceDate;
-    }
+//     public String getPerformedBy() {
+//         return performedBy;
+//     }
 
-    public void setServiceDate(Date serviceDate) {
-        this.serviceDate = serviceDate;
-    }
+//     public void setPerformedBy(String performedBy) {
+//         this.performedBy = performedBy;
+//     }
 
-    public Integer getTuningJobId() {
-        return tuningJobId;
-    }
+//     public Date getServiceDate() {
+//         return serviceDate;
+//     }
 
-    public void setTuningJobId(Integer tuningJobId) {
-        this.tuningJobId = tuningJobId;
-    }
+//     public void setServiceDate(Date serviceDate) {
+//         this.serviceDate = serviceDate;
+//     }
 
-    @Override
-    public String toString() {
-        return "ServiceHistory{" +
-                "serviceId=" + serviceId +
-                ", vehicleId=" + vehicleId +
-                ", serviceType='" + serviceType + '\'' +
-                ", details='" + details + '\'' +
-                ", performedBy='" + performedBy + '\'' +
-                ", serviceDate=" + serviceDate +
-                ", tuningJobId=" + tuningJobId +
-                '}';
-    }
-}
+//     public Integer getTuningJobId() {
+//         return tuningJobId;
+//     }
+
+//     public void setTuningJobId(Integer tuningJobId) {
+//         this.tuningJobId = tuningJobId;
+//     }
+
+//     @Override
+//     public String toString() {
+//         return "ServiceHistory{" +
+//                 "serviceId=" + serviceId +
+//                 ", vehicleId=" + vehicleId +
+//                 ", serviceType='" + serviceType + '\'' +
+//                 ", details='" + details + '\'' +
+//                 ", performedBy='" + performedBy + '\'' +
+//                 ", serviceDate=" + serviceDate +
+//                 ", tuningJobId=" + tuningJobId +
+//                 '}';
+//     }
+// }

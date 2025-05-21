@@ -1,8 +1,0 @@
-model\Service.class
-remote\BookingService.class
-model\Service$ServiceCategory.class
-model\User$UserType.class
-remote\UserService.class
-model\Booking.class
-model\User.class
-remote\ServiceService.class

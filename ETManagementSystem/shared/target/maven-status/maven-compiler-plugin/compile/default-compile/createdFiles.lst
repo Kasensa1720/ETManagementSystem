@@ -1,0 +1,3 @@
+model\User$UserType.class
+model\User.class
+remote\UserService.class

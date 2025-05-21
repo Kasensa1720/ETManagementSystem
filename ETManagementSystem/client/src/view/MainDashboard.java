@@ -1,4 +1,4 @@
-package com.etms.MainDashboard;
+package view;
 
 
 
@@ -34,18 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.etms.client.Customer.CustomerController;
-import com.etms.client.Customer.CustomerView;
-import com.etms.client.ServiceHistory.ServiceHistoryController;
-import com.etms.client.ServiceHistory.ServiceHistoryView;
-import com.etms.client.TuningJob.TuningJobController;
-import com.etms.client.TuningJob.TuningJobView;
-import com.etms.client.Vehicle.VehicleController;
-import com.etms.client.Vehicle.VehicleView;
-import com.etms.server.customer.CustomerService;
-import com.etms.server.servicehistory.ServiceHistoryService;
-import com.etms.server.tuningjob.TuningJobService;
-import com.etms.server.vehicle.VehicleService;
+
 
 public class MainDashboard extends JFrame {
     private JLabel backgroundImageLabel;
@@ -110,20 +99,20 @@ public class MainDashboard extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
 
         // First row of buttons
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        buttonsPanel.add(createResponsiveButton("Manage Customers", e -> setUpCustomerView()), gbc);
+        // gbc.gridx = 0;
+        // gbc.gridy = 0;
+        // buttonsPanel.add(createResponsiveButton("Manage Customers", e -> setUpCustomerView()), gbc);
 
-        gbc.gridx = 1;
-        buttonsPanel.add(createResponsiveButton("Manage Vehicles", e -> setUpVehicleView()), gbc);
+        // gbc.gridx = 1;
+        // buttonsPanel.add(createResponsiveButton("Manage Vehicles", e -> setUpVehicleView()), gbc);
 
-        // Second row
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        buttonsPanel.add(createResponsiveButton("Manage Tuning Jobs", e -> setUpTuningJobView()), gbc);
+        // // Second row
+        // gbc.gridx = 0;
+        // gbc.gridy = 1;
+        // buttonsPanel.add(createResponsiveButton("Manage Tuning Jobs", e -> setUpTuningJobView()), gbc);
 
-        gbc.gridx = 1;
-        buttonsPanel.add(createResponsiveButton("View Service History", e -> setUpServiceHistoryView()), gbc);
+        // gbc.gridx = 1;
+        // buttonsPanel.add(createResponsiveButton("View Service History", e -> setUpServiceHistoryView()), gbc);
 
         mainPanel.add(buttonsPanel, BorderLayout.SOUTH);
         add(mainPanel, BorderLayout.CENTER);
@@ -194,61 +183,61 @@ public class MainDashboard extends JFrame {
         return button;
     }
 
-    private JFrame setUpCustomerView() {
-        try {
-            CustomerView view = new CustomerView();
-            CustomerService service = (CustomerService) Naming.lookup("rmi://localhost/CustomerService");
-            new CustomerController(view);
-            this.setVisible(false);
-            return view;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to connect to CustomerService!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return this;
-        }
-    }
+    // private JFrame setUpCustomerView() {
+    //     try {
+    //         CustomerView view = new CustomerView();
+    //         CustomerService service = (CustomerService) Naming.lookup("rmi://localhost/CustomerService");
+    //         new CustomerController(view);
+    //         this.setVisible(false);
+    //         return view;
+    //     } catch (Exception e) {
+    //         JOptionPane.showMessageDialog(this, "Failed to connect to CustomerService!", "Error", JOptionPane.ERROR_MESSAGE);
+    //         e.printStackTrace();
+    //         return this;
+    //     }
+    // }
 
-    private JFrame setUpVehicleView() {
-        try {
-            VehicleView view = new VehicleView(this);
-            VehicleService service = (VehicleService) Naming.lookup("rmi://localhost/VehicleService");
-            new VehicleController(view, service);
-            this.setVisible(false);
-            return view;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to connect to VehicleService!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return this;
-        }
-    }
+    // private JFrame setUpVehicleView() {
+    //     try {
+    //         VehicleView view = new VehicleView(this);
+    //         VehicleService service = (VehicleService) Naming.lookup("rmi://localhost/VehicleService");
+    //         new VehicleController(view, service);
+    //         this.setVisible(false);
+    //         return view;
+    //     } catch (Exception e) {
+    //         JOptionPane.showMessageDialog(this, "Failed to connect to VehicleService!", "Error", JOptionPane.ERROR_MESSAGE);
+    //         e.printStackTrace();
+    //         return this;
+    //     }
+    // }
 
-    private JFrame setUpTuningJobView() {
-        try {
-            TuningJobView view = new TuningJobView(this);
-            TuningJobService service = (TuningJobService) Naming.lookup("rmi://localhost/TuningJobService");
-            new TuningJobController(view, service);
-            this.setVisible(false);
-            return view;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to connect to TuningJobService!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return this;
-        }
-    }
+    // private JFrame setUpTuningJobView() {
+    //     try {
+    //         TuningJobView view = new TuningJobView(this);
+    //         TuningJobService service = (TuningJobService) Naming.lookup("rmi://localhost/TuningJobService");
+    //         new TuningJobController(view, service);
+    //         this.setVisible(false);
+    //         return view;
+    //     } catch (Exception e) {
+    //         JOptionPane.showMessageDialog(this, "Failed to connect to TuningJobService!", "Error", JOptionPane.ERROR_MESSAGE);
+    //         e.printStackTrace();
+    //         return this;
+    //     }
+    // }
 
-    private JFrame setUpServiceHistoryView() {
-        try {
-            ServiceHistoryView view = new ServiceHistoryView(this);
-            ServiceHistoryService service = (ServiceHistoryService) Naming.lookup("rmi://localhost/ServiceHistoryService");
-            new ServiceHistoryController(view, service);
-            this.setVisible(false);
-            return view;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to connect to ServiceHistoryService!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return this;
-        }
-    }
+    // private JFrame setUpServiceHistoryView() {
+    //     try {
+    //         ServiceHistoryView view = new ServiceHistoryView(this);
+    //         ServiceHistoryService service = (ServiceHistoryService) Naming.lookup("rmi://localhost/ServiceHistoryService");
+    //         new ServiceHistoryController(view, service);
+    //         this.setVisible(false);
+    //         return view;
+    //     } catch (Exception e) {
+    //         JOptionPane.showMessageDialog(this, "Failed to connect to ServiceHistoryService!", "Error", JOptionPane.ERROR_MESSAGE);
+    //         e.printStackTrace();
+    //         return this;
+    //     }
+    // }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
