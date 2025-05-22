@@ -1,87 +1,47 @@
-// package com.etms.server.tuningjob;
+package service;
 
-// import java.rmi.RemoteException;
-// import java.rmi.server.UnicastRemoteObject;
-// import java.util.ArrayList;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import dao.TuningJobDaoHibernate;
+import model.TuningJob;
+import remote.TuningJobService;
 
-// import org.hibernate.Session;
-// import org.hibernate.Transaction;
-// import org.hibernate.query.Query;
+public class TuningJobServiceImpl extends UnicastRemoteObject implements TuningJobService {
+    private final TuningJobDaoHibernate tuningJobDao;
+    
+    public TuningJobServiceImpl() throws RemoteException {
+        super();
+        this.tuningJobDao = new TuningJobDaoHibernate();
+    }
 
-// import com.etms.server.HibernateUtil;
+    @Override
+    public boolean createTuningJob(TuningJob tuningJob) throws RemoteException {
+        return tuningJobDao.createTuningJob(tuningJob);
+    }
 
-// public class TuningJobServiceImpl extends UnicastRemoteObject implements TuningJobService {
+    @Override
+    public boolean updateTuningJob(TuningJob tuningJob) throws RemoteException {
+        return tuningJobDao.updateTuningJob(tuningJob);
+    }
 
-//     public TuningJobServiceImpl() throws RemoteException {
-//         super();
-//     }
+    @Override
+    public TuningJob findTuningJob(int id) throws RemoteException {
+        return tuningJobDao.findTuningJob(id);
+    }
 
-//     @Override
-//     public int createTuningJob(TuningJob tuningJob) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.save(tuningJob);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
+    @Override
+    public boolean deleteTuningJob(int id) throws RemoteException {
+        return tuningJobDao.deleteTuningJob(id);
+    }
 
-//     @Override
-//     public int updateTuningJob(TuningJob tuningJob) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.update(tuningJob);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
+    @Override
+    public List<TuningJob> findAllTuningJobs() throws RemoteException {
+        return tuningJobDao.findAllTuningJobs();
+    }
 
-//     @Override
-//     public int deleteTuningJob(int tuningJobId) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             TuningJob job = session.get(TuningJob.class, tuningJobId);
-//             if (job == null) return 0;
-//             tx = session.beginTransaction();
-//             session.delete(job);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
-
-//     @Override
-//     public TuningJob getTuningJobById(int tuningJobId) throws RemoteException {
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             return session.get(TuningJob.class, tuningJobId);
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             return null;
-//         }
-//     }
-
-//     @Override
-// public ArrayList<TuningJob> getAllTuningJobs() throws RemoteException {
-//     try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//         Query<TuningJob> query = session.createQuery("from TuningJob", TuningJob.class);
-//         return new ArrayList<>(query.list()); // Convert List to ArrayList explicitly
-//     } catch (Exception e) {
-//         e.printStackTrace();
-//         return null;
-//     }
-// }
-
-// }
+    @Override
+    public List<TuningJob> findTuningJobsByVehicle(int vehicleId) throws RemoteException {
+        return tuningJobDao.findTuningJobsByVehicle(vehicleId);
+    }
+}

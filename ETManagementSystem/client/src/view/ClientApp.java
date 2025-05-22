@@ -3,8 +3,11 @@ package view;
 
 import javax.swing.*;
 
-
+import remote.CustomerService;
+import remote.ServiceHistoryService;
+import remote.TuningJobService;
 import remote.UserService;
+import remote.VehicleService;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -12,6 +15,10 @@ import java.rmi.registry.Registry;
 public class ClientApp {
 
     public static UserService userService;
+    public static TuningJobService tuningJobService;
+    public static CustomerService customerService;
+    public static ServiceHistoryService serviceHistoryService;
+    public static VehicleService vehicleService;
     
     // Application State
     private static boolean isConnected = false;
@@ -42,6 +49,10 @@ public class ClientApp {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 5000);
             userService = (UserService) registry.lookup("UserService");
+            tuningJobService  = (TuningJobService) registry.lookup("TuningJobService");
+            customerService = (CustomerService) registry.lookup("CustomerService");
+            vehicleService = (VehicleService) registry.lookup("VehicleService");
+            serviceHistoryService = (ServiceHistoryService) registry.lookup("ServiceHistoryService");
             isConnected = true;
             System.out.println("Connected to server successfully");
         } catch (Exception e) {

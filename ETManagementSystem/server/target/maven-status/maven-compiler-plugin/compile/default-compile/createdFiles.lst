@@ -1,4 +1,12 @@
-dao\UserDaoHibernate.class
-ServerMain.class
-service\UserServiceImpl.class
+dao\CustomerDaoHibernate.class
+dao\TuningJobDaoHibernate.class
+service\TuningJobServiceImpl.class
+dao\VehicleDaoHibernate.class
+service\VehicleServiceImpl.class
+service\ServiceHistoryServiceImpl.class
 utils\HibernateUtil.class
+dao\UserDaoHibernate.class
+ServerApp.class
+service\CustomerServiceImpl.class
+service\UserServiceImpl.class
+dao\ServiceHistoryDaoHibernate.class

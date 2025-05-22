@@ -1,3 +1,12 @@
+model\ServiceHistory.class
+remote\ServiceHistoryService.class
+remote\VehicleService.class
+model\Vehicle$EngineType.class
+remote\CustomerService.class
+model\TuningJob.class
 model\User$UserType.class
-model\User.class
+model\Vehicle.class
 remote\UserService.class
+model\Customer.class
+model\User.class
+remote\TuningJobService.class

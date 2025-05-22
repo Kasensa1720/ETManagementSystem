@@ -1,120 +1,111 @@
-// package com.etms.client.TuningJob;
+package controller;
 
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
-// import java.rmi.RemoteException;
-// import java.util.ArrayList;
+import javax.swing.*;
+import model.TuningJob;
+import remote.TuningJobService;
+import view.TuningJobView;
+import java.awt.event.ActionEvent;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
-// import javax.swing.JOptionPane;
+public class TuningJobController {
+    private final TuningJobView view;
+    private final TuningJobService tuningJobService;
 
-// import com.etms.server.tuningjob.TuningJob;
-// import com.etms.server.tuningjob.TuningJobService;
+    public TuningJobController(TuningJobView view, TuningJobService tuningJobService) {
+        this.view = view;
+        this.tuningJobService = tuningJobService;
+        setupEventListeners();
+        loadInitialData();
+    }
 
-// public class TuningJobController {
-//     private TuningJobView view;
-//     private TuningJobService service;
+    private void setupEventListeners() {
+        view.registerCreateAction(this::handleCreate);
+        view.registerUpdateAction(this::handleUpdate);
+        view.registerDeleteAction(this::handleDelete);
+        view.registerSearchAction(this::handleSearch);
+        view.registerViewAllAction(this::handleViewAll);
+    }
 
-//     public TuningJobController(TuningJobView view, TuningJobService service) {
-//         this.view = view;
-//         this.service = service;
+    private void loadInitialData() {
+        try {
+            view.displayAllTuningJobs(new ArrayList<>(tuningJobService.findAllTuningJobs()));
+        } catch (RemoteException e) {
+            showError("Failed to load tuning jobs: " + e.getMessage());
+        }
+    }
 
-//         // Registering action listeners for buttons in the view
-//         this.view.registerCreateAction(new RegisterButtonListener());
-//         this.view.registerUpdateAction(new UpdateButtonListener());
-//         this.view.registerDeleteAction(new DeleteButtonListener());
-//         this.view.registerSearchAction(new SearchButtonListener());
-//         this.view.registerViewAllAction(new DisplayAllButtonListener());
-//     }
+    private void handleCreate(ActionEvent e) {
+        try {
+            TuningJob tuningJob = view.getTuningJobDetails();
+            if (tuningJob != null && tuningJobService.createTuningJob(tuningJob)) {
+                JOptionPane.showMessageDialog(view, "Tuning job created successfully!");
+                refreshTable();
+            }
+        } catch (RemoteException ex) {
+            showError("Creation failed: " + ex.getMessage());
+        }
+    }
 
-//     // Action listener for Register/Create Button
-//     class RegisterButtonListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             TuningJob tuningJob = view.getTuningJobDetails();
-//             if (tuningJob != null) {
-//                 try {
-//                     int result = service.createTuningJob(tuningJob);
-//                     if (result > 0) {
-//                         JOptionPane.showMessageDialog(view, "Tuning Job Created Successfully!");
-//                     } else {
-//                         JOptionPane.showMessageDialog(view, "Failed to Create Tuning Job!", "Error", JOptionPane.ERROR_MESSAGE);
-//                     }
-//                 } catch (RemoteException ex) {
-//                     JOptionPane.showMessageDialog(view, "Remote error: " + ex.getMessage(), "RMI Error", JOptionPane.ERROR_MESSAGE);
-//                 }
-//             }
-//         }
-//     }
+    private void handleUpdate(ActionEvent e) {
+        try {
+            TuningJob tuningJob = view.getTuningJobDetails();
+            if (tuningJob != null) {
+                Integer id = view.getTuningJobId();
+                if (id != null) {
+                    tuningJob.setTuningId(id);
+                    if (tuningJobService.updateTuningJob(tuningJob)) {
+                        JOptionPane.showMessageDialog(view, "Tuning job updated successfully!");
+                        refreshTable();
+                    }
+                }
+            }
+        } catch (RemoteException ex) {
+            showError("Update failed: " + ex.getMessage());
+        }
+    }
 
-//     // Action listener for Update Button
-//     class UpdateButtonListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             TuningJob tuningJob = view.getTuningJobDetails();
-//             if (tuningJob != null) {
-//                 try {
-//                     int result = service.updateTuningJob(tuningJob);
-//                     if (result > 0) {
-//                         JOptionPane.showMessageDialog(view, "Tuning Job Updated Successfully!");
-//                     } else {
-//                         JOptionPane.showMessageDialog(view, "Failed to Update Tuning Job!", "Error", JOptionPane.ERROR_MESSAGE);
-//                     }
-//                 } catch (RemoteException ex) {
-//                     JOptionPane.showMessageDialog(view, "Remote error: " + ex.getMessage(), "RMI Error", JOptionPane.ERROR_MESSAGE);
-//                 }
-//             }
-//         }
-//     }
+    private void handleDelete(ActionEvent e) {
+        try {
+            Integer id = view.getTuningJobId();
+            if (id != null && tuningJobService.deleteTuningJob(id)) {
+                JOptionPane.showMessageDialog(view, "Tuning job deleted successfully!");
+                refreshTable();
+            }
+        } catch (RemoteException ex) {
+            showError("Deletion failed: " + ex.getMessage());
+        }
+    }
 
-//     // Action listener for Delete Button
-//     class DeleteButtonListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             int tuningId = view.getTuningJobId();
-//             try {
-//                 int result = service.deleteTuningJob(tuningId);
-//                 if (result > 0) {
-//                     JOptionPane.showMessageDialog(view, "Tuning Job Deleted Successfully!");
-//                 } else {
-//                     JOptionPane.showMessageDialog(view, "Failed to Delete Tuning Job!", "Error", JOptionPane.ERROR_MESSAGE);
-//                 }
-//             } catch (RemoteException ex) {
-//                 JOptionPane.showMessageDialog(view, "Remote error: " + ex.getMessage(), "RMI Error", JOptionPane.ERROR_MESSAGE);
-//             }
-//         }
-//     }
+    private void handleSearch(ActionEvent e) {
+        try {
+            Integer id = view.getTuningJobId();
+            if (id != null) {
+                TuningJob tuningJob = tuningJobService.findTuningJob(id);
+                if (tuningJob != null) {
+                    view.displayTuningJob(tuningJob);
+                } else {
+                    showError("Tuning job not found!");
+                }
+            }
+        } catch (RemoteException ex) {
+            showError("Search failed: " + ex.getMessage());
+        }
+    }
 
-//     // Action listener for Search Button
-//     class SearchButtonListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             Integer tuningId = view.getTuningJobId();
-//             if (tuningId == null) {
-//                 return;
-//             }
-//             try {
-//                 TuningJob tuningJob = service.getTuningJobById(tuningId);
-//                 if (tuningJob != null) {
-//                     view.displayTuningJob(tuningJob);
-//                 } else {
-//                     JOptionPane.showMessageDialog(view, "Tuning Job Not Found!", "Error", JOptionPane.ERROR_MESSAGE);
-//                 }
-//             } catch (RemoteException ex) {
-//                 JOptionPane.showMessageDialog(view, "Remote error: " + ex.getMessage(), "RMI Error", JOptionPane.ERROR_MESSAGE);
-//             }
-//         }
-//     }
+    private void handleViewAll(ActionEvent e) {
+        refreshTable();
+    }
 
-//     // Action listener for View All Button
-//     class DisplayAllButtonListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             try {
-//                 ArrayList<TuningJob> tuningJobs = service.getAllTuningJobs();
-//                 view.displayAllTuningJobs(tuningJobs);
-//             } catch (RemoteException ex) {
-//                 JOptionPane.showMessageDialog(view, "Remote error: " + ex.getMessage(), "RMI Error", JOptionPane.ERROR_MESSAGE);
-//             }
-//         }
-//     }
-// }
+    private void refreshTable() {
+        try {
+            view.displayAllTuningJobs(new ArrayList<>(tuningJobService.findAllTuningJobs()));
+        } catch (RemoteException ex) {
+            showError("Failed to refresh data: " + ex.getMessage());
+        }
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(view, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}

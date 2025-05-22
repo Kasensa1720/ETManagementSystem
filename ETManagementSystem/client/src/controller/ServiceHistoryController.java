@@ -1,67 +1,60 @@
-// package com.etms.client.ServiceHistory;
+package controller;
 
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
-// import java.rmi.RemoteException;
-// import java.util.ArrayList;
+import javax.swing.*;
+import model.ServiceHistory;
+import remote.ServiceHistoryService;
+import view.ServiceHistoryView;
+import java.awt.event.ActionEvent;
+import java.rmi.RemoteException;
+import java.util.List;
 
-// import javax.swing.JOptionPane;
+public class ServiceHistoryController {
+    private final ServiceHistoryView view;
+    private final ServiceHistoryService serviceHistoryService;
 
-// import com.etms.server.servicehistory.ServiceHistory;
-// import com.etms.server.servicehistory.ServiceHistoryService;
+    public ServiceHistoryController(ServiceHistoryView view, ServiceHistoryService serviceHistoryService) {
+        this.view = view;
+        this.serviceHistoryService = serviceHistoryService;
+        setupEventListeners();
+        loadInitialData();
+    }
 
-// public class ServiceHistoryController {
-//     private ServiceHistoryView view;
-//     private ServiceHistoryService service;  // RMI service interface
+    private void setupEventListeners() {
+        view.registerAddAction(this::handleAdd);
+        view.registerViewAllAction(this::handleViewAll);
+    }
 
-//     public ServiceHistoryController(ServiceHistoryView view, ServiceHistoryService service) {
-//         this.view = view;
-//         this.service = service;
+    private void loadInitialData() {
+        refreshTable();
+    }
 
-//         // Registering button listeners
-//         this.view.registerAddAction(new AddServiceHistoryListener());
-//         this.view.registerViewAllAction(new ViewAllServiceHistoryListener());
-//     }
+    private void handleAdd(ActionEvent e) {
+        try {
+            ServiceHistory serviceHistory = view.getServiceHistoryDetails();
+            if (serviceHistory != null && serviceHistoryService.createServiceHistory(serviceHistory)) {
+                JOptionPane.showMessageDialog(view, "Service history added successfully!");
+                view.clearFields();
+                refreshTable();
+            }
+        } catch (RemoteException ex) {
+            showError("Failed to add service history: " + ex.getMessage());
+        }
+    }
 
-//     // Listener for Add Service History button
-//     class AddServiceHistoryListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             ServiceHistory serviceHistory = view.getServiceHistoryDetails();
-//             if (serviceHistory != null) {
-//                 try {
-//                     int result = service.createServiceHistory(serviceHistory); // RMI call
-//                     if (result > 0) {
-//                         JOptionPane.showMessageDialog(view, "Service History Added Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-//                         view.clearFields();
-//                         loadServiceHistory();
-//                     } else {
-//                         JOptionPane.showMessageDialog(view, "Failed to Add Service History.", "Error", JOptionPane.ERROR_MESSAGE);
-//                     }
-//                 } catch (RemoteException ex) {
-//                     JOptionPane.showMessageDialog(view, "RemoteException: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//                     ex.printStackTrace();
-//                 }
-//             }
-//         }
-//     }
+    private void handleViewAll(ActionEvent e) {
+        refreshTable();
+    }
 
-//     // Listener for View All Service History button
-//     class ViewAllServiceHistoryListener implements ActionListener {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//             loadServiceHistory();
-//         }
-//     }
+    private void refreshTable() {
+        try {
+            List<ServiceHistory> historyList = serviceHistoryService.findAllServiceHistory();
+            view.displayServiceHistory(historyList);
+        } catch (RemoteException ex) {
+            showError("Failed to load service history: " + ex.getMessage());
+        }
+    }
 
-//     // Load service history list using RMI service
-//     private void loadServiceHistory() {
-//         try {
-//             ArrayList<ServiceHistory> serviceHistoryList = service.getAllServiceHistory(); // RMI call
-//             view.displayServiceHistory(serviceHistoryList);
-//         } catch (RemoteException e) {
-//             JOptionPane.showMessageDialog(view, "Failed to load service history: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//             e.printStackTrace();
-//         }
-//     }
-// }
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(view, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}

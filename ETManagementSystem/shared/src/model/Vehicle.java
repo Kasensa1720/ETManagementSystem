@@ -1,140 +1,143 @@
-// package com.etms.server.vehicle;
+package model;
 
-// import javax.persistence.Column;
-// import javax.persistence.Convert;
-// import javax.persistence.Entity;
-// import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
-// import javax.persistence.Id;
-// import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
 
-// import com.etms.client.Vehicle.EngineTypeConverter;
+@Entity
+@Table(name = "vehicles")
+public class Vehicle implements Serializable {
+    
+    public enum EngineType {
+        TURBO_PETROL, NA_PETROL, SUPERCHARGED_PETROL,
+        NA_DIESEL, TURBO_DIESEL, SUPERCHARGED_DIESEL
+    }
 
-// @Entity
-// @Table(name = "vehicle")
-// public class Vehicle {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "vehicle_id")
+    private int vehicleId;
+    
+    @Column(name = "customer_id", nullable = false)
+    private int customerId;
+    
+    @Column(name = "make", nullable = false)
+    private String make;
+    
+    @Column(name = "model", nullable = false)
+    private String model;
+    
+    @Column(name = "year", nullable = false)
+    private int year;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "engine_type", nullable = false)
+    private EngineType engineType;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    private Customer customer;
+    
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceHistory> serviceHistory = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TuningJob> tuningJobs = new ArrayList<>();
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "vehicle_id")
-//     private int vehicleId;
+    // Constructors
+    public Vehicle() {}
 
-//     @Column(name = "customer_id", nullable = true)
-//     private Integer customerId;
+    public Vehicle(int vehicleId, int customerId, String make, 
+                  String model, int year, EngineType engineType) {
+        this.vehicleId = vehicleId;
+        this.customerId = customerId;
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.engineType = engineType;
+    }
 
-//     @Column(name = "make", length = 100)
-//     private String make;
+    // Getters and Setters
+    public int getVehicleId() {
+        return vehicleId;
+    }
 
-//     @Column(name = "model", length = 100)
-//     private String model;
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
+    }
 
-//     @Column(name = "year")
-//     private int year;
+    public int getCustomerId() {
+        return customerId;
+    }
 
-//     @Convert(converter = EngineTypeConverter.class)
-//     @Column(name = "engine_type")
-//     private EngineType engineType;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 
-//     public Vehicle() {}
+    public String getMake() {
+        return make;
+    }
 
-//     public Vehicle(int vehicleId, Integer customerId, String make, String model, int year, EngineType engineType) {
-//         this.vehicleId = vehicleId;
-//         this.customerId = customerId;
-//         this.make = make;
-//         this.model = model;
-//         this.year = year;
-//         this.engineType = engineType;
-//     }
+    public void setMake(String make) {
+        this.make = make;
+    }
 
-//     // Getters and setters
+    public String getModel() {
+        return model;
+    }
 
-//     public int getVehicleId() {
-//         return vehicleId;
-//     }
+    public void setModel(String model) {
+        this.model = model;
+    }
 
-//     public void setVehicleId(int vehicleId) {
-//         this.vehicleId = vehicleId;
-//     }
+    public int getYear() {
+        return year;
+    }
 
-//     public Integer getCustomerId() {
-//         return customerId;
-//     }
+    public void setYear(int year) {
+        this.year = year;
+    }
 
-//     public void setCustomerId(Integer customerId) {
-//         this.customerId = customerId;
-//     }
+    public EngineType getEngineType() {
+        return engineType;
+    }
 
-//     public String getMake() {
-//         return make;
-//     }
+    public void setEngineType(EngineType engineType) {
+        this.engineType = engineType;
+    }
 
-//     public void setMake(String make) {
-//         this.make = make;
-//     }
+    public Customer getCustomer() {
+        return customer;
+    }
 
-//     public String getModel() {
-//         return model;
-//     }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-//     public void setModel(String model) {
-//         this.model = model;
-//     }
+    public List<ServiceHistory> getServiceHistory() {
+        return serviceHistory;
+    }
 
-//     public int getYear() {
-//         return year;
-//     }
+    public void setServiceHistory(List<ServiceHistory> serviceHistory) {
+        this.serviceHistory = serviceHistory;
+    }
 
-//     public void setYear(int year) {
-//         this.year = year;
-//     }
+    public List<TuningJob> getTuningJobs() {
+        return tuningJobs;
+    }
 
-//     public EngineType getEngineType() {
-//         return engineType;
-//     }
+    public void setTuningJobs(List<TuningJob> tuningJobs) {
+        this.tuningJobs = tuningJobs;
+    }
 
-//     public void setEngineType(EngineType engineType) {
-//         this.engineType = engineType;
-//     }
+    public void addServiceHistory(ServiceHistory history) {
+        serviceHistory.add(history);
+        history.setVehicle(this);
+    }
 
-//     @Override
-//     public String toString() {
-//         return "Vehicle{" +
-//                 "vehicleId=" + vehicleId +
-//                 ", customerId=" + customerId +
-//                 ", make='" + make + '\'' +
-//                 ", model='" + model + '\'' +
-//                 ", year=" + year +
-//                 ", engineType=" + engineType +
-//                 '}';
-//     }
-
-//     // Enum
-//     public enum EngineType {
-//         NA("NA"),
-//         TURBO_PETROL("Turbo"),
-//         NA_PETROL("NA"),
-//         SUPERCHARGED_PETROL("Supercharged"),
-//         NA_DIESEL("NA"),
-//         TURBO_DIESEL("Turbo"),
-//         SUPERCHARGED_DIESEL("Supercharged");
-
-//         private final String dbValue;
-
-//         EngineType(String dbValue) {
-//             this.dbValue = dbValue;
-//         }
-
-//         public String getDbValue() {
-//             return dbValue;
-//         }
-
-//         public static EngineType fromDbValue(String dbValue) {
-//             for (EngineType type : values()) {
-//                 if (type.dbValue.equalsIgnoreCase(dbValue)) {
-//                     return type;
-//                 }
-//             }
-//             throw new IllegalArgumentException("No enum constant with DB value: " + dbValue);
-//         }
-//     }
-// }
+    public void addTuningJob(TuningJob tuningJob) {
+        tuningJobs.add(tuningJob);
+        tuningJob.setTuningId(this.getVehicleId());
+    }
+}

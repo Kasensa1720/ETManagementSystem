@@ -1,86 +1,42 @@
-// package com.etms.server.servicehistory;
+package service;
 
-// import java.rmi.RemoteException;
-// import java.rmi.server.UnicastRemoteObject;
-// import java.util.ArrayList;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import dao.ServiceHistoryDaoHibernate;
+import model.ServiceHistory;
+import remote.ServiceHistoryService;
 
-// import org.hibernate.Session;
-// import org.hibernate.Transaction;
-// import org.hibernate.query.Query;
+public class ServiceHistoryServiceImpl extends UnicastRemoteObject implements ServiceHistoryService {
+    private final ServiceHistoryDaoHibernate serviceHistoryDao;
+    
+    public ServiceHistoryServiceImpl() throws RemoteException {
+        super();
+        this.serviceHistoryDao = new ServiceHistoryDaoHibernate();
+    }
 
-// import com.etms.server.HibernateUtil;
+    @Override
+    public boolean createServiceHistory(ServiceHistory serviceHistory) throws RemoteException {
+        return serviceHistoryDao.createServiceHistory(serviceHistory);
+    }
 
-// public class ServiceHistoryServiceImpl extends UnicastRemoteObject implements ServiceHistoryService {
+    @Override
+    public List<ServiceHistory> findAllServiceHistory() throws RemoteException {
+        return serviceHistoryDao.findAllServiceHistory();
+    }
 
-//     public ServiceHistoryServiceImpl() throws RemoteException {
-//         super();
-//     }
+    @Override
+    public List<ServiceHistory> findServiceHistoryByVehicle(int vehicleId) throws RemoteException {
+        return serviceHistoryDao.findServiceHistoryByVehicle(vehicleId);
+    }
 
-//     @Override
-//     public int createServiceHistory(ServiceHistory serviceHistory) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.save(serviceHistory);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
+    @Override
+    public List<ServiceHistory> findServiceHistoryByTuningJob(int tuningJobId) throws RemoteException {
+        return serviceHistoryDao.findServiceHistoryByTuningJob(tuningJobId);
+    }
 
-//     @Override
-//     public ArrayList<ServiceHistory> getAllServiceHistory() throws RemoteException {
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             Query<ServiceHistory> query = session.createQuery("from ServiceHistory", ServiceHistory.class);
-//             return new ArrayList<>(query.getResultList());
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             return new ArrayList<>();
-//         }
-//     }
-
-//     @Override
-//     public ServiceHistory getServiceHistoryById(int id) throws RemoteException {
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             return session.get(ServiceHistory.class, id);
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             return null;
-//         }
-//     }
-
-//     @Override
-//     public int updateServiceHistory(ServiceHistory serviceHistory) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.update(serviceHistory);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
-
-//     @Override
-//     public int deleteServiceHistory(int id) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             ServiceHistory history = session.get(ServiceHistory.class, id);
-//             if (history == null) return 0;
-//             tx = session.beginTransaction();
-//             session.delete(history);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
-// }
+    @Override
+    public boolean deleteServiceHistory(int serviceId) throws RemoteException {
+        return serviceHistoryDao.deleteServiceHistory(serviceId);
+    }
+}

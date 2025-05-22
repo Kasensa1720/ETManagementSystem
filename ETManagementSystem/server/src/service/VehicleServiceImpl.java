@@ -1,86 +1,47 @@
-// package com.etms.server.vehicle;
+package service;
 
-// import java.rmi.RemoteException;
-// import java.rmi.server.UnicastRemoteObject;
-// import java.util.ArrayList;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import dao.VehicleDaoHibernate;
+import model.Vehicle;
+import remote.VehicleService;
 
-// import org.hibernate.Session;
-// import org.hibernate.Transaction;
-// import org.hibernate.query.Query;
+public class VehicleServiceImpl extends UnicastRemoteObject implements VehicleService {
+    private final VehicleDaoHibernate vehicleDao;
+    
+    public VehicleServiceImpl() throws RemoteException {
+        super();
+        this.vehicleDao = new VehicleDaoHibernate();
+    }
 
-// import com.etms.server.HibernateUtil;
+    @Override
+    public boolean createVehicle(Vehicle vehicle) throws RemoteException {
+        return vehicleDao.createVehicle(vehicle);
+    }
 
-// public class VehicleServiceImpl extends UnicastRemoteObject implements VehicleService {
+    @Override
+    public boolean updateVehicle(Vehicle vehicle) throws RemoteException {
+        return vehicleDao.updateVehicle(vehicle);
+    }
 
-//     public VehicleServiceImpl() throws RemoteException {
-//         super();
-//     }
+    @Override
+    public Vehicle findVehicle(int id) throws RemoteException {
+        return vehicleDao.findVehicle(id);
+    }
 
-//     @Override
-//     public int createVehicle(Vehicle vehicle) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.save(vehicle);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
+    @Override
+    public boolean deleteVehicle(int id) throws RemoteException {
+        return vehicleDao.deleteVehicle(id);
+    }
 
-//     @Override
-//     public int updateVehicle(Vehicle vehicle) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             tx = session.beginTransaction();
-//             session.update(vehicle);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
+    @Override
+    public List<Vehicle> findAllVehicles() throws RemoteException {
+        return vehicleDao.findAllVehicles();
+    }
 
-//     @Override
-//     public int deleteVehicle(int vehicleId) throws RemoteException {
-//         Transaction tx = null;
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             Vehicle vehicle = session.get(Vehicle.class, vehicleId);
-//             if (vehicle == null) return 0;
-//             tx = session.beginTransaction();
-//             session.delete(vehicle);
-//             tx.commit();
-//             return 1;
-//         } catch (Exception e) {
-//             if (tx != null) tx.rollback();
-//             e.printStackTrace();
-//             return 0;
-//         }
-//     }
-
-//     @Override
-//     public Vehicle getVehicleById(int vehicleId) throws RemoteException {
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             return session.get(Vehicle.class, vehicleId);
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             return null;
-//         }
-//     }
-
-//     @Override
-//     public ArrayList<Vehicle> getAllVehicles() throws RemoteException {
-//         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//             Query<Vehicle> query = session.createQuery("from Vehicle", Vehicle.class);
-//             return new ArrayList<>(query.list());
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             return null;
-//         }
-//     }
-// }
+    @Override
+    public List<Vehicle> findVehiclesByCustomer(int customerId) throws RemoteException {
+        return vehicleDao.findVehiclesByCustomer(customerId);
+    }
+}

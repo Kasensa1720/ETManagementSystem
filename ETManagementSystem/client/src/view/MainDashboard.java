@@ -1,91 +1,101 @@
 package view;
 
-
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.rmi.Naming;
-
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-
+import javax.swing.*;
+import controller.*;
 
 public class MainDashboard extends JFrame {
+    private static final Color BACKGROUND_COLOR = new Color(20, 20, 20);
+    private static final Color BUTTON_GRADIENT_START = new Color(60, 120, 180);
+    private static final Color BUTTON_GRADIENT_END = new Color(30, 80, 140);
+    private static final Color BUTTON_HOVER_START = new Color(120, 160, 200);
+    private static final Color BUTTON_HOVER_END = new Color(80, 140, 200);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 28);
+    private static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 16);
+    
     private JLabel backgroundImageLabel;
-    private JLayeredPane imageLayeredPane;
     private BufferedImage originalImage;
 
     public MainDashboard() {
+        initializeFrame();
+        setupUI();
+        setVisible(true);
+    }
+
+    private void initializeFrame() {
         setTitle("Vehicle Tuning Management System");
         setSize(1000, 700);
         setMinimumSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+    }
 
+    private void setupUI() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.BLACK);
+        add(mainPanel, BorderLayout.CENTER);
 
-        // HEADER
+        mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
+        mainPanel.add(createImagePanel(), BorderLayout.CENTER);
+        mainPanel.add(createButtonsPanel(), BorderLayout.SOUTH);
+    }
+
+    private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(10, 0));
-        headerPanel.setBackground(new Color(20, 20, 20));
+        headerPanel.setBackground(BACKGROUND_COLOR);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         JLabel titleLabel = new JLabel("Main Menu");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
+        headerPanel.add(titleLabel, BorderLayout.WEST);
 
-        headerPanel.add(titleLabel, BorderLayout.EAST);
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        try {
+            ImageIcon logoIcon = new ImageIcon("C:\\Users\\USER\\Documents\\NetBeansProjects\\ETManagementSystem\\ETManagementSystem\\client\\src\\view\\images\\DSR.png");
+            Image scaledLogo = logoIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo));
+            logoLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            headerPanel.add(logoLabel, BorderLayout.EAST);
+        } catch (Exception e) {
+            JLabel logoLabel = new JLabel("Logo");
+            logoLabel.setForeground(Color.WHITE);
+            headerPanel.add(logoLabel, BorderLayout.EAST);
+        }
 
-        // IMAGE SECTION
-        imageLayeredPane = new JLayeredPane();
+        return headerPanel;
+    }
+
+    private JPanel createImagePanel() {
+        JLayeredPane imageLayeredPane = new JLayeredPane();
         imageLayeredPane.setLayout(new BorderLayout());
-        imageLayeredPane.setPreferredSize(new Dimension(getWidth(), (int) (getHeight() * 0.7)));
+        imageLayeredPane.setPreferredSize(new Dimension(getWidth(), (int)(getHeight() * 0.7)));
 
         backgroundImageLabel = new JLabel();
         backgroundImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundImageLabel.setVerticalAlignment(SwingConstants.CENTER);
         loadOriginalImage();
-        resizeImageLayer();
+        updateBackgroundImage();
 
         imageLayeredPane.add(backgroundImageLabel, BorderLayout.CENTER);
-        mainPanel.add(imageLayeredPane, BorderLayout.CENTER);
 
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                resizeImageLayer();
+                updateBackgroundImage();
             }
         });
 
-        // BUTTONS SECTION
+        JPanel container = new JPanel(new BorderLayout());
+        container.add(imageLayeredPane, BorderLayout.CENTER);
+        return container;
+    }
+
+    private JPanel createButtonsPanel() {
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
         buttonsPanel.setBackground(Color.BLACK);
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
@@ -98,63 +108,34 @@ public class MainDashboard extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // First row of buttons
-        // gbc.gridx = 0;
-        // gbc.gridy = 0;
-        // buttonsPanel.add(createResponsiveButton("Manage Customers", e -> setUpCustomerView()), gbc);
+        String[][] buttonData = {
+            {"Manage Customers", "Manage Vehicles"},
+            {"Manage Tuning Jobs", "View Service History"}
+        };
 
-        // gbc.gridx = 1;
-        // buttonsPanel.add(createResponsiveButton("Manage Vehicles", e -> setUpVehicleView()), gbc);
-
-        // // Second row
-        // gbc.gridx = 0;
-        // gbc.gridy = 1;
-        // buttonsPanel.add(createResponsiveButton("Manage Tuning Jobs", e -> setUpTuningJobView()), gbc);
-
-        // gbc.gridx = 1;
-        // buttonsPanel.add(createResponsiveButton("View Service History", e -> setUpServiceHistoryView()), gbc);
-
-        mainPanel.add(buttonsPanel, BorderLayout.SOUTH);
-        add(mainPanel, BorderLayout.CENTER);
-
-        setVisible(true);
-    }
-
-    private void resizeImageLayer() {
-        int width = getWidth();
-        int height = (int) (getHeight() * 0.7);
-        backgroundImageLabel.setBounds(0, 0, width, height);
-        updateBackgroundImage(width, height);
-    }
-
-    private void loadOriginalImage() {
-        try {
-            originalImage = ImageIO.read(new File("C:\\users\\user\\Downloads\\WhatsApp Image 2025-04-09 at 11.31.38_d11ee7dd.jpg"));
-        } catch (Exception e) {
-            backgroundImageLabel.setText("Image not found");
-            backgroundImageLabel.setForeground(Color.WHITE);
-            backgroundImageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        for (int row = 0; row < buttonData.length; row++) {
+            for (int col = 0; col < buttonData[row].length; col++) {
+                gbc.gridx = col;
+                gbc.gridy = row;
+                buttonsPanel.add(createMenuButton(buttonData[row][col]), gbc);
+            }
         }
+
+        return buttonsPanel;
     }
 
-    private void updateBackgroundImage(int width, int height) {
-        if (originalImage != null) {
-            Image scaled = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            backgroundImageLabel.setIcon(new ImageIcon(scaled));
-        }
-    }
-
-    private JButton createResponsiveButton(String text, java.awt.event.ActionListener action) {
+    private JButton createMenuButton(String text) {
         JButton button = new JButton(text) {
             @Override
             protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
+                Graphics2D g2 = (Graphics2D)g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                GradientPaint gradient = new GradientPaint(0, 0, new Color(60, 120, 180),
-                        0, getHeight(), new Color(30, 80, 140));
-                g2.setPaint(getModel().isRollover() ?
-                        new GradientPaint(0, 0, new Color(120, 160, 200),
-                                0, getHeight(), new Color(80, 140, 200)) : gradient);
+                
+                Color startColor = getModel().isRollover() ? BUTTON_HOVER_START : BUTTON_GRADIENT_START;
+                Color endColor = getModel().isRollover() ? BUTTON_HOVER_END : BUTTON_GRADIENT_END;
+                
+                GradientPaint gradient = new GradientPaint(0, 0, startColor, 0, getHeight(), endColor);
+                g2.setPaint(gradient);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
                 g2.setColor(new Color(200, 200, 200, 100));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
@@ -164,89 +145,119 @@ public class MainDashboard extends JFrame {
         };
 
         button.setForeground(Color.WHITE);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setFont(BUTTON_FONT);
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
         button.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
-        button.addActionListener(action);
+        button.addActionListener(getButtonAction(text));
 
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            public void mouseExited(MouseEvent evt) {
+                button.setCursor(Cursor.getDefaultCursor());
             }
         });
 
         return button;
     }
 
-    // private JFrame setUpCustomerView() {
-    //     try {
-    //         CustomerView view = new CustomerView();
-    //         CustomerService service = (CustomerService) Naming.lookup("rmi://localhost/CustomerService");
-    //         new CustomerController(view);
-    //         this.setVisible(false);
-    //         return view;
-    //     } catch (Exception e) {
-    //         JOptionPane.showMessageDialog(this, "Failed to connect to CustomerService!", "Error", JOptionPane.ERROR_MESSAGE);
-    //         e.printStackTrace();
-    //         return this;
-    //     }
-    // }
+    private ActionListener getButtonAction(String buttonText) {
+        return e -> {
+            try {
+                JFrame view = null;
+                switch (buttonText) {
+                    case "Manage Customers":
+                        view = new CustomerView(this);
+                        new CustomerController((CustomerView)view, ClientApp.customerService);
+                        break;
+                    case "Manage Vehicles":
+                        view = new VehicleView(this);
+                        new VehicleController((VehicleView)view, ClientApp.vehicleService);
+                        break;
+                    case "Manage Tuning Jobs":
+                        view = new TuningJobView(this);
+                        new TuningJobController((TuningJobView)view, ClientApp.tuningJobService);
+                        break;
+                    case "View Service History":
+                        view = new ServiceHistoryView(this);
+                        new ServiceHistoryController((ServiceHistoryView)view, ClientApp.serviceHistoryService);
+                        break;
+                }
+                if (view != null) {
+                    this.setVisible(false);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Failed to connect to " + buttonText.replace(" ", "") + "Service!", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        };
+    }
 
-    // private JFrame setUpVehicleView() {
-    //     try {
-    //         VehicleView view = new VehicleView(this);
-    //         VehicleService service = (VehicleService) Naming.lookup("rmi://localhost/VehicleService");
-    //         new VehicleController(view, service);
-    //         this.setVisible(false);
-    //         return view;
-    //     } catch (Exception e) {
-    //         JOptionPane.showMessageDialog(this, "Failed to connect to VehicleService!", "Error", JOptionPane.ERROR_MESSAGE);
-    //         e.printStackTrace();
-    //         return this;
-    //     }
-    // }
+    private void loadOriginalImage() {
+        try {
+            originalImage = ImageIO.read(new File("C:\\users\\user\\Downloads\\WhatsApp Image 2025-04-09 at 11.31.38_d11ee7dd.jpg"));
+            backgroundImageLabel.setBackground(Color.BLACK);
+            backgroundImageLabel.setOpaque(true);
+        } catch (Exception e) {
+            backgroundImageLabel.setText("Image not found");
+            backgroundImageLabel.setForeground(Color.WHITE);
+            backgroundImageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            backgroundImageLabel.setBackground(Color.BLACK);
+            backgroundImageLabel.setOpaque(true);
+        }
+    }
 
-    // private JFrame setUpTuningJobView() {
-    //     try {
-    //         TuningJobView view = new TuningJobView(this);
-    //         TuningJobService service = (TuningJobService) Naming.lookup("rmi://localhost/TuningJobService");
-    //         new TuningJobController(view, service);
-    //         this.setVisible(false);
-    //         return view;
-    //     } catch (Exception e) {
-    //         JOptionPane.showMessageDialog(this, "Failed to connect to TuningJobService!", "Error", JOptionPane.ERROR_MESSAGE);
-    //         e.printStackTrace();
-    //         return this;
-    //     }
-    // }
-
-    // private JFrame setUpServiceHistoryView() {
-    //     try {
-    //         ServiceHistoryView view = new ServiceHistoryView(this);
-    //         ServiceHistoryService service = (ServiceHistoryService) Naming.lookup("rmi://localhost/ServiceHistoryService");
-    //         new ServiceHistoryController(view, service);
-    //         this.setVisible(false);
-    //         return view;
-    //     } catch (Exception e) {
-    //         JOptionPane.showMessageDialog(this, "Failed to connect to ServiceHistoryService!", "Error", JOptionPane.ERROR_MESSAGE);
-    //         e.printStackTrace();
-    //         return this;
-    //     }
-    // }
+    private void updateBackgroundImage() {
+        if (originalImage != null) {
+            int panelWidth = getWidth();
+            int panelHeight = (int)(getHeight() * 0.7);
+            
+            // Calculate scaling factors
+            double widthRatio = (double) panelWidth / originalImage.getWidth();
+            double heightRatio = (double) panelHeight / originalImage.getHeight();
+            
+            // Use the larger ratio to ensure full coverage
+            double scale = Math.max(widthRatio, heightRatio);
+            
+            int scaledWidth = (int)(originalImage.getWidth() * scale);
+            int scaledHeight = (int)(originalImage.getHeight() * scale);
+            
+            // Calculate position to center the image
+            int x = (panelWidth - scaledWidth) / 2;
+            int y = (panelHeight - scaledHeight) / 2;
+            
+            // Create scaled image
+            Image scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+            
+            // Create a new BufferedImage to draw on
+            BufferedImage result = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = result.createGraphics();
+            
+            // Fill with black background first
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0, 0, panelWidth, panelHeight);
+            
+            // Draw the scaled image
+            g2d.drawImage(scaledImage, x, y, null);
+            g2d.dispose();
+            
+            backgroundImageLabel.setIcon(new ImageIcon(result));
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                new MainDashboard();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            new MainDashboard();
         });
     }
 }

@@ -22,6 +22,10 @@
 
         <!-- Mapping files -->
         <mapping class="model.User"/>
+        <mapping class="model.Customer"/>
+        <mapping class="model.ServiceHistory"/>
+        <mapping class="model.Vehicle"/>
+        <mapping class="model.TuningJob"/>
         <!-- Add other entity mappings here -->
     </session-factory>
 </hibernate-configuration>

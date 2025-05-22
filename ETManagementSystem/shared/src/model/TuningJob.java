@@ -1,165 +1,167 @@
-// package com.etms.server.tuningjob;
+package model;
 
-// import java.math.BigDecimal;
-// import java.sql.Timestamp;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Date;
+import javax.persistence.*;
 
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
-// import javax.persistence.Id;
-// import javax.persistence.Table;
+@Entity
+@Table(name = "tuning_jobs")
+public class TuningJob implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tuning_id")
+    private int tuningId;
+    
+    @Column(name = "vehicle_id", nullable = false)
+    private int vehicleId;
+    
+    @Column(name = "ecu_file", nullable = false)
+    private String ecuFileUsed;
+    
+    @Column(name = "before_hp", nullable = false)
+    private int beforeHp;
+    
+    @Column(name = "after_hp", nullable = false)
+    private int afterHp;
+    
+    @Column(name = "before_torque", nullable = false)
+    private int beforeTorque;
+    
+    @Column(name = "after_torque", nullable = false)
+    private int afterTorque;
+    
+    @Column(name = "fuel_efficiency_change", precision = 5, scale = 2)
+    private BigDecimal fuelEfficiencyChange;
+    
+    @Column(name = "cost", precision = 10, scale = 2)
+    private BigDecimal cost;
+    
+    @Column(name = "tuning_date")
+    private Date tuningDate;
+    
+    @OneToOne(mappedBy = "tuningJob")
+    private ServiceHistory serviceHistory;
 
+    // Add this field to TuningJob class:
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "vehicle_id", insertable = false, updatable = false)
+private Vehicle vehicle;
 
-// @Entity
-// @Table(name = "tuning_job")
-// public class TuningJob {
+// Add getter and setter for vehicle:
+public Vehicle getVehicle() {
+    return vehicle;
+}
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "tuning_id")
-//     private int tuningId;
+public void setVehicle(Vehicle vehicle) {
+    this.vehicle = vehicle;
+}
 
-//     @Column(name = "vehicle_id", nullable = true)
-//     private Integer vehicleId;
+    // Constructors
+    public TuningJob() {}
 
-//     @Column(name = "ecu_file_used", length = 255)
-//     private String ecuFileUsed;
+    public TuningJob(int tuningId, int vehicleId, String ecuFileUsed, 
+                    int beforeHp, int afterHp, int beforeTorque, 
+                    int afterTorque, BigDecimal fuelEfficiencyChange, 
+                    BigDecimal cost, Date tuningDate) {
+        this.tuningId = tuningId;
+        this.vehicleId = vehicleId;
+        this.ecuFileUsed = ecuFileUsed;
+        this.beforeHp = beforeHp;
+        this.afterHp = afterHp;
+        this.beforeTorque = beforeTorque;
+        this.afterTorque = afterTorque;
+        this.fuelEfficiencyChange = fuelEfficiencyChange;
+        this.cost = cost;
+        this.tuningDate = tuningDate;
+    }
 
-//     @Column(name = "before_hp")
-//     private int beforeHp;
+    // Getters and Setters
+    public int getTuningId() {
+        return tuningId;
+    }
 
-//     @Column(name = "after_hp")
-//     private int afterHp;
+    public void setTuningId(int tuningId) {
+        this.tuningId = tuningId;
+    }
 
-//     @Column(name = "before_torque")
-//     private int beforeTorque;
+    public int getVehicleId() {
+        return vehicleId;
+    }
 
-//     @Column(name = "after_torque")
-//     private int afterTorque;
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
+    }
 
-//     @Column(name = "fuel_efficiency_change", precision = 10, scale = 2)
-//     private BigDecimal fuelEfficiencyChange;
+    public String getEcuFileUsed() {
+        return ecuFileUsed;
+    }
 
-//     @Column(name = "cost", precision = 10, scale = 2)
-//     private BigDecimal cost;
+    public void setEcuFileUsed(String ecuFileUsed) {
+        this.ecuFileUsed = ecuFileUsed;
+    }
 
-//     @Column(name = "date", nullable = false)
-//     private Timestamp date;
+    public int getBeforeHp() {
+        return beforeHp;
+    }
 
-//     // Default constructor
-//     public TuningJob() {}
+    public void setBeforeHp(int beforeHp) {
+        this.beforeHp = beforeHp;
+    }
 
-//     // Full constructor
-//     public TuningJob(int tuningId, Integer vehicleId, String ecuFileUsed, int beforeHp, int afterHp,
-//                      int beforeTorque, int afterTorque, BigDecimal fuelEfficiencyChange,
-//                      BigDecimal cost, Timestamp date) {
-//         this.tuningId = tuningId;
-//         this.vehicleId = vehicleId;
-//         this.ecuFileUsed = ecuFileUsed;
-//         this.beforeHp = beforeHp;
-//         this.afterHp = afterHp;
-//         this.beforeTorque = beforeTorque;
-//         this.afterTorque = afterTorque;
-//         this.fuelEfficiencyChange = fuelEfficiencyChange;
-//         this.cost = cost;
-//         this.date = date;
-//     }
+    public int getAfterHp() {
+        return afterHp;
+    }
 
-//     // Getters and Setters
-//     public int getTuningId() {
-//         return tuningId;
-//     }
+    public void setAfterHp(int afterHp) {
+        this.afterHp = afterHp;
+    }
 
-//     public void setTuningId(int tuningId) {
-//         this.tuningId = tuningId;
-//     }
+    public int getBeforeTorque() {
+        return beforeTorque;
+    }
 
-//     public Integer getVehicleId() {
-//         return vehicleId;
-//     }
+    public void setBeforeTorque(int beforeTorque) {
+        this.beforeTorque = beforeTorque;
+    }
 
-//     public void setVehicleId(Integer vehicleId) {
-//         this.vehicleId = vehicleId;
-//     }
+    public int getAfterTorque() {
+        return afterTorque;
+    }
 
-//     public String getEcuFileUsed() {
-//         return ecuFileUsed;
-//     }
+    public void setAfterTorque(int afterTorque) {
+        this.afterTorque = afterTorque;
+    }
 
-//     public void setEcuFileUsed(String ecuFileUsed) {
-//         this.ecuFileUsed = ecuFileUsed;
-//     }
+    public BigDecimal getFuelEfficiencyChange() {
+        return fuelEfficiencyChange;
+    }
 
-//     public int getBeforeHp() {
-//         return beforeHp;
-//     }
+    public void setFuelEfficiencyChange(BigDecimal fuelEfficiencyChange) {
+        this.fuelEfficiencyChange = fuelEfficiencyChange;
+    }
 
-//     public void setBeforeHp(int beforeHp) {
-//         this.beforeHp = beforeHp;
-//     }
+    public BigDecimal getCost() {
+        return cost;
+    }
 
-//     public int getAfterHp() {
-//         return afterHp;
-//     }
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
+    }
 
-//     public void setAfterHp(int afterHp) {
-//         this.afterHp = afterHp;
-//     }
+    public Date getTuningDate() {
+        return tuningDate;
+    }
 
-//     public int getBeforeTorque() {
-//         return beforeTorque;
-//     }
+    public void setTuningDate(Date tuningDate) {
+        this.tuningDate = tuningDate;
+    }
 
-//     public void setBeforeTorque(int beforeTorque) {
-//         this.beforeTorque = beforeTorque;
-//     }
+    public ServiceHistory getServiceHistory() {
+        return serviceHistory;
+    }
 
-//     public int getAfterTorque() {
-//         return afterTorque;
-//     }
-
-//     public void setAfterTorque(int afterTorque) {
-//         this.afterTorque = afterTorque;
-//     }
-
-//     public BigDecimal getFuelEfficiencyChange() {
-//         return fuelEfficiencyChange;
-//     }
-
-//     public void setFuelEfficiencyChange(BigDecimal fuelEfficiencyChange) {
-//         this.fuelEfficiencyChange = fuelEfficiencyChange;
-//     }
-
-//     public BigDecimal getCost() {
-//         return cost;
-//     }
-
-//     public void setCost(BigDecimal cost) {
-//         this.cost = cost;
-//     }
-
-//     public Timestamp getDate() {
-//         return date;
-//     }
-
-//     public void setDate(Timestamp date) {
-//         this.date = date;
-//     }
-
-//     @Override
-//     public String toString() {
-//         return "TuningJob{" +
-//                 "tuningId=" + tuningId +
-//                 ", vehicleId=" + vehicleId +
-//                 ", ecuFileUsed='" + ecuFileUsed + '\'' +
-//                 ", beforeHp=" + beforeHp +
-//                 ", afterHp=" + afterHp +
-//                 ", beforeTorque=" + beforeTorque +
-//                 ", afterTorque=" + afterTorque +
-//                 ", fuelEfficiencyChange=" + fuelEfficiencyChange +
-//                 ", cost=" + cost +
-//                 ", date=" + date +
-//                 '}';
-//     }
-// }
+    public void setServiceHistory(ServiceHistory serviceHistory) {
+        this.serviceHistory = serviceHistory;
+    }
+}

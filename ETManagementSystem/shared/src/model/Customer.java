@@ -1,106 +1,99 @@
-// package com.etms.server.customer;
+package model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "customers")
+public class Customer implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
+    private int customerId;
+    
+    @Column(name = "name", nullable = false)
+    private String name;
+    
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+    
+    @Column(name = "phone", nullable = false)
+    private String phone;
+    
+    @Column(name = "address", nullable = false)
+    private String address;
+    
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vehicle> vehicles = new ArrayList<>();
 
-// import java.io.Serializable;
-// import java.util.List;
+    // Constructors
+    public Customer() {}
 
-// import javax.persistence.CascadeType;
-// import javax.persistence.Column;
-// import javax.persistence.Entity;
-// import javax.persistence.FetchType;
-// import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
-// import javax.persistence.Id;
-// import javax.persistence.OneToMany;
-// import javax.persistence.Table;
+    public Customer(String name, String email, String phone, String address) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
 
-// import com.etms.server.tuningjob.TuningJob;
+    // Getters and Setters
+    public int getCustomerId() {
+        return customerId;
+    }
 
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 
-// @Entity
-// @Table(name = "customer")
-// public class Customer implements Serializable {
-//     private static final long serialVersionUID = 1L;
+    public String getName() {
+        return name;
+    }
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "customer_id")
-//     private int customerId;
+    public void setName(String name) {
+        this.name = name;
+    }
 
-//     @Column(name = "name", nullable = false, length = 100)
-//     private String name;
+    public String getEmail() {
+        return email;
+    }
 
-//     @Column(name = "email", nullable = false, length = 100)
-//     private String email;
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-//     @Column(name = "phone", nullable = false, length = 15)
-//     private String phone;
+    public String getPhone() {
+        return phone;
+    }
 
-//     @Column(name = "address", length = 255)
-//     private String address;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-//     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//     private List<TuningJob> tuningJobs;
+    public String getAddress() {
+        return address;
+    }
 
-//     public Customer() {}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-//     public int getCustomerId() {
-//         return customerId;
-//     }
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
 
-//     public void setCustomerId(int customerId) {
-//         this.customerId = customerId;
-//     }
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
+    }
 
-//     public String getName() {
-//         return name;
-//     }
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+        vehicle.setCustomer(this);
+    }
 
-//     public void setName(String name) {
-//         this.name = name;
-//     }
-
-//     public String getEmail() {
-//         return email;
-//     }
-
-//     public void setEmail(String email) {
-//         this.email = email;
-//     }
-
-//     public String getPhone() {
-//         return phone;
-//     }
-
-//     public void setPhone(String phone) {
-//         this.phone = phone;
-//     }
-
-//     public String getAddress() {
-//         return address;
-//     }
-
-//     public void setAddress(String address) {
-//         this.address = address;
-//     }
-
-//     public List<TuningJob> getTuningJobs() {
-//         return tuningJobs;
-//     }
-
-//     public void setTuningJobs(List<TuningJob> tuningJobs) {
-//         this.tuningJobs = tuningJobs;
-//     }
-
-//     @Override
-//     public String toString() {
-//         return "Customer{" +
-//                 "customerId=" + customerId +
-//                 ", name='" + name + '\'' +
-//                 ", email='" + email + '\'' +
-//                 ", phone='" + phone + '\'' +
-//                 ", address='" + address + '\'' +
-//                 '}';
-//     }
-// }
+    public void removeVehicle(Vehicle vehicle) {
+        vehicles.remove(vehicle);
+        vehicle.setCustomer(null);
+    }
+}
